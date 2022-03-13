@@ -1,0 +1,8 @@
+body{
+    margin: 55px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dot{
+    border-radius:50%;
+}
