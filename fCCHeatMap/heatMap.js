@@ -1,87 +1,101 @@
 d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json")
-.then((data)=>{
-    console.log("this is data:", data.monthlyVariance[0])
-    
-    let variance = data.monthlyVariance
-    console.log("this is monthlyVariances (an array of objects): ", variance)
-    console.log("each entry has keyvalue pair of month, year and variance")
-    
-    let year = d3.timeParse("%Y")
-    let month = d3.timeParse("%B")
-    
-    let minYear = year(d3.min(variance,(d)=>d.year))
-    let maxYear = year(d3.max(variance,(d)=>d.year))
+    .then((data) => {
+        console.log("this is data:", data.monthlyVariance[0])
 
-    let minMonth = (month("January"))
-    let maxMonth = (month("December"))
+        let variance = data.monthlyVariance
+        console.log("this is monthlyVariances (an array of objects): ", variance)
+        console.log("each entry has keyvalue pair of month, year and variance")
 
-    console.log("minmonth:", minMonth)
-    // let minMonth = (d3.min(variance,(d)=>d.month))
-    // let maxMonth = (d3.max(variance,(d)=>d.month))
+        let year = d3.timeParse("%Y")
+        let month = d3.timeParse("%B")
+
+        // groups?? from https://www.d3-graph-gallery.com/graph/heatmap_style.html
+
+        let myGroups = d3.map(variance, (d) => d.group).keys()
+        let myVars = d3.map(variance, (d) => d.variable).keys()
+        console.log("groups: ", myGroups)
+        console.log("variables: ", myVars)
+
+        let minYear = year(d3.min(variance, (d) => d.year))
+        let maxYear = year(d3.max(variance, (d) => d.year))
+
+        let minMonth = month("January")
+        let maxMonth = month("December")
+
+        console.log("minmonth:", minMonth)
+        console.log("maxmonth:", maxMonth)
+        // let minMonth = (d3.min(variance,(d)=>d.month))
+        // let maxMonth = (d3.max(variance,(d)=>d.month))
 
 
 
-    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    
-    console.log("minYear: ", minYear,"\nmaxYear: ", maxYear)
-    const width= 800
-    const height = 500
-    const padding = 20
-    const yPadding=200
-    
-    let svg=d3.select(".heatMap")
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height)
-    
-    // User Story #1: My heat map should have a title with a corresponding id="title".
-    svg.append('text')
-        .text("Heat Map!")
-        .attr('id', 'title')
-        .attr('x', 40+"%")
-        .attr('y', 10+"%")
-        .attr('class','fs-3')
-    // User Story #2: My heat map should have a description with a corresponding id="description".
-    svg.append('text')
-        .attr('x', 30+"%")
-        .attr('y', 15+"%")
-        .text('monthly global land-surface temparatures')
-        .attr('id', 'description')
-        .attr('class', 'fs-5')
+        let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-    // User Story #3: My heat map should have an x-axis with a corresponding id="x-axis".
-    let scaleX = d3.scaleTime()
-        .domain([minYear,maxYear])  
-        .range([padding, width])
-    let xAxis = d3.axisBottom(scaleX)
+        console.log("minYear: ", minYear, "\nmaxYear: ", maxYear)
+        const width = 800
+        const height = 500
+        const padding = 40
+        const yPadding = 200
+
+        let svg = d3.select(".heatMap")
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height)
+
+        // User Story #1: My heat map should have a title with a corresponding id="title".
+        svg.append('text')
+            .text("Heat Map!")
+            .attr('id', 'title')
+            .attr('x', 40 + "%")
+            .attr('y', 10 + "%")
+            .attr('class', 'fs-3')
+        // User Story #2: My heat map should have a description with a corresponding id="description".
+        svg.append('text')
+            .attr('x', 30 + "%")
+            .attr('y', 15 + "%")
+            .text('monthly global land-surface temparatures')
+            .attr('id', 'description')
+            .attr('class', 'fs-5')
+
+        // User Story #3: My heat map should have an x-axis with a corresponding id="x-axis".
+        let scaleX = d3.scaleTime()
+            .domain([minYear, maxYear])
+            .range([padding, width])
+        let xAxis = d3.axisBottom(scaleX)
         // .tickFormat(d3.timeFormat("%Y"))
-    
-    svg.append('g')
-        .call(xAxis)
-        .attr("transform", "translate(0,"+(height-padding)+")")
-        .attr('id', 'x-axis')
-    // User Story #4: My heat map should have a y-axis with a corresponding id="y-axis".
 
-    let scaleY = d3.scaleLinear()
-        .domain([1,12])
-        .range([(height-yPadding), padding])
-    let yAxis = d3.axisLeft(scaleY)
-        .ticks(12)
-    svg.append('g')
-        .call(yAxis)
-        .attr('id', 'y-axis')
-        .attr("transform","translate("+padding+","+(yPadding-padding)+")")
+        svg.append('g')
+            .call(xAxis)
+            .attr("transform", "translate(0," + (height - padding) + ")")
+            .attr('id', 'x-axis')
+        // User Story #4: My heat map should have a y-axis with a corresponding id="y-axis".
+        let scaleY = d3.scaleTime()
+            // need to use newDate to get months in here as domain...ended up doing that with timeParsing declarations at the top
+            .domain([minMonth, maxMonth])
+            .range([(height - yPadding), padding])
+        let yAxis = d3.axisLeft(scaleY)
+            // makes months abbreviated instead of full names
+            .tickFormat(d3.timeFormat("%B"))
+        svg.append('g')
+            .call(yAxis)
+            .attr('id', 'y-axis')
+            .attr("transform", "translate(" + padding + "," + (yPadding - padding) + ")")
+        // User Story #5: My heat map should have rect elements with a class="cell" that represent the data.
+        svg.selectAll(".cell")
+            .data(variance)
+            .enter()
+            .append("rect")
+            .attr("class", "cell")
+            .attr('x', (d) => scaleX(d.year))
+            .attr('y', (d) => scaleY(d.month))
+            .attr('width', 200)
+            .attr('height', 40)
 
-    svg.selectAll(".cell")
-        .data(variance)
-        .enter()
-        .append("rect")
-        .attr("class", "cell")
-        .attr('x',(d)=>d.Year)
+        console.log("Hello, ", variance[133].year)
 
     })
 
-// User Story #5: My heat map should have rect elements with a class="cell" that represent the data.
+
 // User Story #6: There should be at least 4 different fill colors used for the cells.
 // User Story #7: Each cell will have the properties data-month, data-year, data-temp containing their corresponding month, year, and temperature values.
 // User Story #8: The data-month, data-year of each cell should be within the range of the data.
