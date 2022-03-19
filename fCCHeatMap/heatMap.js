@@ -77,7 +77,9 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .enter()
         .append("rect")
         .attr("class", "cell")
-        .attr('x',(d)=>d.Year)
+        .attr('x',(d)=>d.year)
+        .attr('y',(d)=>d.month)
+        .attr('data-month',(d)=>d.month)
 
     })
 
