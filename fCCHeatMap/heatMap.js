@@ -21,8 +21,12 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         let minYear = year(d3.min(variance, (d) => d.year))
         let maxYear = year(d3.max(variance, (d) => d.year))
 
-        let minMonth = month("January")
-        let maxMonth = month("December")
+
+        let minMonth = new Date(month(d3.min(variance,(d)=>d.month)))
+        let maxMonth = new Date(month(d3.min(variance,(d)=>d.month)))
+
+        // let minMonth = month("January")
+        // let maxMonth = month("December")
 
         let key = [-4,-1,0,1,4]
         let colors = d3.scaleOrdinal()
@@ -81,8 +85,9 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         
         // User Story #3: My heat map should have an x-axis with a corresponding id="x-axis".
         let scaleX = d3.scaleTime()
-        .domain([minYear, maxYear])
-        .range([padding, width])
+        // minmaxyear worked at first i think
+             .domain([minYear, maxYear])
+            .range([padding, width])
         let xAxis = d3.axisBottom(scaleX)
         // .tickFormat(d3.timeFormat("%Y"))
         
@@ -92,9 +97,9 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
             .attr("transform", "translate(0," + (height - padding) + ")")
             .attr('id', 'x-axis')
         // User Story #4: My heat map should have a y-axis with a corresponding id="y-axis".
-        let scaleY = d3.scaleTime()
+        let scaleY = d3.scaleLinear()
         // need to use newDate to get months in here as domain...ended up doing that with timeParsing declarations at the top
-            .domain([minMonth, maxMonth])
+            .domain([1,12])
             .range([(height - yPadding), padding])
         let yAxis = d3.axisLeft(scaleY)
             // User Story #11: My heat map should have multiple tick labels on the y-axis with the full month name.
@@ -110,9 +115,9 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
             .append("rect")
             .attr("class", "cell")
             .attr('x', (d) => scaleX(d.year))
-            .attr('y', (d) => scaleY(d.month-1))
-            .attr('width', 200)
-            .attr('height', 40)
+            .attr('y', (d) => scaleY(d.month))
+            .attr('width', 4)
+            .attr('height', 20)
             // User Story #6: There should be at least 4 different fill colors used for the cells.
             .style('fill',(d)=>colors(d.variance))
             // User Story #7: Each cell will have the properties data-month, data-year, data-temp containing their corresponding month, year, and temperature values.
