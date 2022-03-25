@@ -13,20 +13,20 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 
         // groups?? from https://www.d3-graph-gallery.com/graph/heatmap_style.html
 
-        let myGroups = d3.map(variance, (d) => d.group).keys()
-        let myVars = d3.map(variance, (d) => d.variable).keys()
-        console.log("groups: ", myGroups)
-        console.log("variables: ", myVars)
+        // let myGroups = d3.map(variance, (d) => d.group).keys()
+        // let myVars = d3.map(variance, (d) => d.variable).keys()
+        // console.log("groups: ", myGroups)
+        // console.log("variables: ", myVars)
 
         let minYear = year(d3.min(variance, (d) => d.year))
         let maxYear = year(d3.max(variance, (d) => d.year))
 
 
-        let minMonth = new Date(month(d3.min(variance,(d)=>d.month)))
-        let maxMonth = new Date(month(d3.min(variance,(d)=>d.month)))
+        // let minMonth = new Date(month(d3.min(variance,(d)=>d.month)))
+        // let maxMonth = new Date(month(d3.min(variance,(d)=>d.month)))
 
-        // let minMonth = month("January")
-        // let maxMonth = month("December")
+        let minMonth = new Date(month("January"))
+        let maxMonth = new Date(month("December"))
 
         let key = [-4,-1,0,1,4]
         let colors = d3.scaleOrdinal()
@@ -34,7 +34,7 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
             // color scheme from https://observablehq.com/@d3/color-schemes
             .range(["#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494"])
 
-            let toolTip = d3.select(".chart")
+        let toolTip = d3.select(".chart")
             .append("div")
             .style("position", "absolute")
             .attr("id", "tooltip")
@@ -58,6 +58,8 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
         console.log("minYear: ", minYear, "\nmaxYear: ", maxYear)
+        console.log("minMonth: ", minMonth, "\nmaxMonth: ", maxMonth)
+
         const width = 800
         const height = 500
         const padding = 40
@@ -97,10 +99,12 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
             .attr("transform", "translate(0," + (height - padding) + ")")
             .attr('id', 'x-axis')
         // User Story #4: My heat map should have a y-axis with a corresponding id="y-axis".
-        let scaleY = d3.scaleLinear()
+        // changed from linear to band after inspecting solution and reading about scaleBand
+        let scaleY = d3.scaleBand()
         // need to use newDate to get months in here as domain...ended up doing that with timeParsing declarations at the top
-            .domain([1,12])
+            .domain([0,1,2,3,4,5,6,7,8,9,10,11])
             .range([(height - yPadding), padding])
+            
         let yAxis = d3.axisLeft(scaleY)
             // User Story #11: My heat map should have multiple tick labels on the y-axis with the full month name.
             .tickFormat(d3.timeFormat("%B"))
